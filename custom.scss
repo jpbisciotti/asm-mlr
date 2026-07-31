@@ -1,0 +1,137 @@
+/*-- scss:defaults --*/
+
+// Palette sampled (approximately) from the screenshot
+$deck-green:  #1e3b33;   // dark green title-slide background
+$deck-teal:   #63c7b2;   // subtitle teal
+$deck-blue:   #b9cdec;   // sigmoid curve light blue
+$deck-ink:    #17342c;   // heading colour on light slides
+$deck-accent: #1d5d50;   // "Section 1" label green
+
+// Fonts (approximations of the originals — swap if you know the real ones)
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap');
+
+$font-family-sans-serif: "Source Sans 3", sans-serif;
+$presentation-heading-font: "Source Serif 4", Georgia, serif;
+$presentation-heading-color: $deck-ink;
+$presentation-heading-font-weight: 700;
+
+$body-bg: #ffffff;
+$body-color: #2b2b2b;
+$link-color: $deck-accent;
+
+$presentation-title-slide-text-align: left;
+
+/*-- scss:rules --*/
+
+// ---------- Title slide: dark green, left-aligned, serif ----------
+// Background colour is set by data-background-color in the qmd YAML so it
+// fills the whole viewport; here we only lay out the content.
+#title-slide,
+section.title-slide {
+  text-align: left;
+
+  // Full-height column: title/subtitle at top, author pushed to bottom
+  height: 100%;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: flex-start;
+  top: 0 !important;                // defeat reveal's vertical centering
+  padding: 2.2em 1.5em 1.5em 1.5em;
+  box-sizing: border-box;
+
+  .title {
+    color: #ffffff;
+    font-family: $presentation-heading-font;
+    font-weight: 700;
+    font-size: 2.4em;
+    margin-bottom: 0.4em;
+  }
+
+  .subtitle {
+    color: $deck-teal;
+    font-family: $presentation-heading-font;
+    font-weight: 600;
+    font-size: 1.05em;
+    max-width: 62%;                 // keep clear of the sigmoid on the right
+    margin-top: 0;
+  }
+
+  .quarto-title-authors {
+    justify-content: flex-start;
+    margin: auto 0 0 0;             // flex: push to the bottom of the slide
+    padding: 0;
+  }
+
+  .quarto-title-author {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.6em;
+    padding: 0;
+  }
+
+  .quarto-title-author-name {
+    color: #d9e4e0;
+    font-family: $font-family-sans-serif;
+    font-size: 0.55em;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .quarto-title-affiliation {
+    color: #d9e4e0;
+    font-family: $font-family-sans-serif;
+    font-size: 0.55em;
+    font-weight: 400;
+    margin: 0;
+  }
+}
+
+// Sigmoid graphic pinned to the lower right of the title slide
+#title-slide .sigmoid,
+section.title-slide .sigmoid {
+  position: absolute;
+  right: 1em;
+  bottom: 1.5em;
+  width: 42%;
+  max-width: 42%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+// ---------- Content slides: white, dark-green serif headings ----------
+.reveal h1,
+.reveal h2 {
+  color: $deck-ink;
+  font-weight: 700;
+}
+
+// "Section 1: ..." style label
+.reveal .section-label {
+  color: $deck-accent;
+  font-family: $font-family-sans-serif;
+  font-weight: 700;
+  font-size: 0.62em;
+  margin-top: 1.2em;
+}
+
+// ---------- Roadmap slide: panel row + Section 2 side note ----------
+.reveal .roadmap-row {
+  margin-top: 1.6em;
+  align-items: center;
+}
+
+// Vertical divider between the four panels and the Section 2 note
+.reveal .section-two-col {
+  border-left: 1.5px solid #c3c9ce;
+  padding-left: 1em;
+  font-family: $font-family-sans-serif;
+  font-size: 0.62em;
+  color: #5f6a72;
+  align-self: center;
+}
+
+.reveal .section-two-label {
+  color: $deck-accent;
+  font-weight: 700;
+}
