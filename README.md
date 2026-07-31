@@ -6,9 +6,7 @@ The deck is built with [Quarto](https://quarto.org) and [reveal.js](https://reve
 
 ## Who this is for
 
-The deck is written for a listener who wants a bite-sized walk through multivariable logistic regression. It builds in four steps: an exact straight line, then uncertainty, then a yes-or-no outcome, then several predictors. Section 2 applies all of it to Table 5 of a real microbiology paper.
-
-If you are that listener, watch the video. If you want to change the deck, read on.
+The deck is written for a listener who wants a bite-sized walk through multivariable logistic regression. It builds in four steps: an exact straight line, then uncertainty, then a yes-or-no outcome, then several predictors. Section 2 applies all of it a table from a paper. 
 
 ## What you need
 
