@@ -1,0 +1,1155 @@
+---
+title: "Reading the Odds"
+subtitle: "Multivariable Logistic Regression --- from y = mx + b to Log-Odds"
+author:
+  - name: "John Paul Bisciotti"
+    affiliations: "Lead Data Scientist, Department of Defense" 
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    slide-number: false
+    menu: false
+    width: 1280
+    height: 720
+title-slide-attributes:
+  data-background-color: "#1e3b33"
+execute:
+  echo: false
+  warning: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+source("plots.R")
+source("notes.R")
+```
+
+```{r}
+#| label: sigmoid-figure
+#| include: false
+# Generate the light-blue sigmoid with dashed asymptotes once. The image is
+# placed on the title slide by title_slide_decorations() at the end of the deck
+# (kept out of the preamble so no blank slide is created before Roadmap).
+
+fig_slide_01 <- plot_fig_slide_01()
+
+ggplot2::ggsave(
+  "sigmoid.png",
+  fig_slide_01,
+  width = 4, height = 1.5, dpi = 200,
+  bg = "transparent"
+)
+```
+
+## Disclaimer
+
+The views and opinions expressed in this document are those of the author(s) and do not represent the official position, policy, or endorsement of the Department of Defense (also known as the Department of War), the United States Government, or any of their agencies or components, unless another official document expressly designates them as such. 
+
+```{r}
+#| label: title-slide-decorations
+#| output: asis
+# Decorates the auto title slide (sigmoid image + speaker note). Lives here,
+# inside a real slide, rather than in the preamble.
+title_slide_decorations("slide-01")
+```
+
+## Roadmap
+
+::: {.section-label}
+Section 1:  build our understanding of the model, in four steps
+:::
+
+:::: {.columns .roadmap-row}
+
+::: {.column width="100%"}
+
+:::
+
+::: {.column .section-two-col width="100%"}
+
+:::
+
+::::
+
+```{r}
+#| label: notes-slide-02
+#| output: asis
+speaker_note("slide-02")
+```
+
+## Roadmap
+
+::: {.section-label}
+Section 1:  build our understanding of the model, in four steps
+:::
+
+:::: {.columns .roadmap-row}
+
+::: {.column width="100%"}
+```{r}
+#| label: roadmap-panels-1
+#| fig-width: 12
+#| fig-height: 4
+#| fig-dpi: 200
+plot_fig_slide_02(1)
+```
+:::
+
+::: {.column .section-two-col width="100%"}
+
+:::
+
+::::
+
+```{r}
+#| label: notes-slide-02-1
+#| output: asis
+speaker_note("slide-02")
+```
+
+## Roadmap
+
+::: {.section-label}
+Section 1:  build our understanding of the model, in four steps
+:::
+
+:::: {.columns .roadmap-row}
+
+::: {.column width="100%"}
+```{r}
+#| label: roadmap-panels-2
+#| fig-width: 12
+#| fig-height: 4
+#| fig-dpi: 200
+plot_fig_slide_02(2)
+```
+:::
+
+::: {.column .section-two-col width="100%"}
+
+:::
+
+::::
+
+```{r}
+#| label: notes-slide-02-2
+#| output: asis
+speaker_note("slide-02")
+```
+
+## Roadmap
+
+::: {.section-label}
+Section 1:  build our understanding of the model, in four steps
+:::
+
+:::: {.columns .roadmap-row}
+
+::: {.column width="100%"}
+```{r}
+#| label: roadmap-panels-3
+#| fig-width: 12
+#| fig-height: 4
+#| fig-dpi: 200
+plot_fig_slide_02(3)
+```
+:::
+
+::: {.column .section-two-col width="100%"}
+
+:::
+
+::::
+
+```{r}
+#| label: notes-slide-02-3
+#| output: asis
+speaker_note("slide-02")
+```
+
+## Roadmap
+
+::: {.section-label}
+Section 1:  build our understanding of the model, in four steps
+:::
+
+:::: {.columns .roadmap-row}
+
+::: {.column width="100%"}
+```{r}
+#| label: roadmap-panels-4
+#| fig-width: 12
+#| fig-height: 4
+#| fig-dpi: 200
+plot_fig_slide_02(4)
+```
+:::
+
+::: {.column .section-two-col width="100%"}
+
+:::
+
+::::
+
+```{r}
+#| label: notes-slide-02-4
+#| output: asis
+speaker_note("slide-02")
+```
+
+## Roadmap
+
+::: {.section-label}
+Section 1:  build our understanding of the model, in four steps
+:::
+
+:::: {.columns .roadmap-row}
+
+::: {.column width="100%"}
+```{r}
+#| label: roadmap-panels-5
+#| fig-width: 12
+#| fig-height: 4
+#| fig-dpi: 200
+plot_fig_slide_02(4)
+```
+:::
+
+::: {.column .section-two-col width="100%"}
+[Section 2:]{.section-two-label}<br>
+interpret a published figure
+:::
+
+::::
+
+```{r}
+#| label: notes-slide-02-5
+#| output: asis
+speaker_note("slide-02")
+```
+
+## Exact relationship 
+
+```{r}
+#| label: glasses-of-water-1
+plot_fig_slide_03(1)
+```
+
+```{r}
+#| label: notes-slide-03-1
+#| output: asis
+speaker_note("slide-03")
+```
+
+## Exact relationship 
+
+```{r}
+#| label: glasses-of-water-2
+plot_fig_slide_03(2)
+```
+
+```{r}
+#| label: notes-slide-03-2
+#| output: asis
+speaker_note("slide-03")
+```
+
+## Exact relationship 
+
+```{r}
+#| label: glasses-of-water-3
+plot_fig_slide_03(3)
+```
+
+```{r}
+#| label: notes-slide-03-3
+#| output: asis
+speaker_note("slide-03")
+```
+
+## Exact relationship --- C and F
+
+```{r}
+#| label: temperature-plot-1
+plot_fig_slide_04(1)
+```
+
+```{r}
+#| label: notes-slide-04-1
+#| output: asis
+speaker_note("slide-04")
+```
+
+## Exact relationship --- C and F
+
+```{r}
+#| label: temperature-plot-2
+plot_fig_slide_04(2)
+```
+
+```{r}
+#| label: notes-slide-04-2
+#| output: asis
+speaker_note("slide-04")
+```
+
+## Exact relationship --- C and F
+
+```{r}
+#| label: temperature-plot-3
+plot_fig_slide_04(3)
+```
+
+```{r}
+#| label: notes-slide-04-3
+#| output: asis
+speaker_note("slide-04")
+```
+
+## Exact relationship --- C and F
+
+```{r}
+#| label: temperature-plot-4
+plot_fig_slide_04(4)
+```
+
+```{r}
+#| label: notes-slide-04-4
+#| output: asis
+speaker_note("slide-04")
+```
+
+## Uncertainty 
+
+```{r}
+#| label: balance-scales-1
+#| output: asis
+plot_fig_slide_05(1)
+```
+
+```{r}
+#| label: notes-slide-05-1
+#| output: asis
+speaker_note("slide-05")
+```
+
+## Uncertainty 
+
+```{r}
+#| label: balance-scales-2
+#| output: asis
+plot_fig_slide_05(2)
+```
+
+```{r}
+#| label: notes-slide-05-2
+#| output: asis
+speaker_note("slide-05")
+```
+
+## Uncertainty 
+
+```{r}
+#| label: balance-scales-3
+#| output: asis
+plot_fig_slide_05(3)
+```
+
+```{r}
+#| label: notes-slide-05-3
+#| output: asis
+speaker_note("slide-05")
+```
+
+## Uncertainty 
+
+```{r}
+#| label: balance-scales-4
+#| output: asis
+plot_fig_slide_05(4)
+```
+
+```{r}
+#| label: notes-slide-05-4
+#| output: asis
+speaker_note("slide-05")
+```
+
+## Uncertainty --- height and weight
+
+```{r}
+#| label: height-and-weight-plot-1
+plot_fig_slide_06(1)
+```
+
+```{r}
+#| label: notes-slide-06-1
+#| output: asis
+speaker_note("slide-06")
+```
+
+## Uncertainty --- height and weight
+
+```{r}
+#| label: height-and-weight-plot-2
+plot_fig_slide_06(2)
+```
+
+```{r}
+#| label: notes-slide-06-2
+#| output: asis
+speaker_note("slide-06")
+```
+
+## Uncertainty --- height and weight
+
+```{r}
+#| label: height-and-weight-plot-3
+plot_fig_slide_06(3)
+```
+
+```{r}
+#| label: notes-slide-06-3
+#| output: asis
+speaker_note("slide-06")
+```
+
+## Uncertainty --- height and weight
+
+```{r}
+#| label: height-and-weight-plot-4
+plot_fig_slide_06(4)
+```
+
+```{r}
+#| label: notes-slide-06-4
+#| output: asis
+speaker_note("slide-06")
+```
+
+## Uncertainty --- height and weight
+
+```{r}
+#| label: height-and-weight-plot-5
+plot_fig_slide_06(5)
+```
+
+```{r}
+#| label: notes-slide-06-5
+#| output: asis
+speaker_note("slide-06")
+```
+
+## Uncertainty --- height and weight
+
+```{r}
+#| label: height-and-weight-plot-6
+plot_fig_slide_06(6)
+```
+
+```{r}
+#| label: notes-slide-06-6
+#| output: asis
+speaker_note("slide-06")
+```
+
+## Yes-or-no outcome
+
+```{r}
+#| label: death-status-1
+plot_fig_slide_07(1)
+```
+
+```{r}
+#| label: notes-slide-07-1
+#| output: asis
+speaker_note("slide-07")
+```
+
+## Yes-or-no outcome
+
+```{r}
+#| label: death-status-2
+plot_fig_slide_07(2)
+```
+
+```{r}
+#| label: notes-slide-07-2
+#| output: asis
+speaker_note("slide-07")
+```
+
+## Yes-or-no outcome
+
+```{r}
+#| label: death-status-3
+plot_fig_slide_07(3)
+```
+
+```{r}
+#| label: notes-slide-07-3
+#| output: asis
+speaker_note("slide-07")
+```
+
+## Yes-or-no outcome
+
+```{r}
+#| label: death-status-4
+plot_fig_slide_07(4)
+```
+
+```{r}
+#| label: notes-slide-07-4
+#| output: asis
+speaker_note("slide-07")
+```
+
+## Yes-or-no outcome
+
+```{r}
+#| label: death-status-5
+plot_fig_slide_07(5)
+```
+
+```{r}
+#| label: notes-slide-07-5
+#| output: asis
+speaker_note("slide-07")
+```
+
+## Yes-or-no outcome
+
+```{r}
+#| label: death-status-6
+plot_fig_slide_07(6)
+```
+
+```{r}
+#| label: notes-slide-07-6
+#| output: asis
+speaker_note("slide-07")
+```
+
+## Yes-or-no outcome
+
+```{r}
+#| label: death-status-7
+plot_fig_slide_07(7)
+```
+
+```{r}
+#| label: notes-slide-07-7
+#| output: asis
+speaker_note("slide-07")
+```
+
+## Odds
+
+```{r}
+#| label: ten-people-1
+plot_fig_slide_08(1)
+```
+
+```{r}
+#| label: notes-slide-08-1
+#| output: asis
+speaker_note("slide-08")
+```
+
+## Odds
+
+```{r}
+#| label: ten-people-2
+plot_fig_slide_08(2)
+```
+
+```{r}
+#| label: notes-slide-08-2
+#| output: asis
+speaker_note("slide-08")
+```
+
+## Odds
+
+```{r}
+#| label: ten-people-3
+plot_fig_slide_08(3)
+```
+
+```{r}
+#| label: notes-slide-08-3
+#| output: asis
+speaker_note("slide-08")
+```
+
+## ln(odds)
+
+```{r}
+#| label: number-line-1
+plot_fig_slide_09(1)
+```
+
+```{r}
+#| label: notes-slide-09-1
+#| output: asis
+speaker_note("slide-09")
+```
+
+## ln(odds)
+
+```{r}
+#| label: number-line-2
+plot_fig_slide_09(2)
+```
+
+```{r}
+#| label: notes-slide-09-2
+#| output: asis
+speaker_note("slide-09")
+```
+
+## ln(odds)
+
+```{r}
+#| label: number-line-3
+plot_fig_slide_09(3)
+```
+
+```{r}
+#| label: notes-slide-09-3
+#| output: asis
+speaker_note("slide-09")
+```
+
+## ln(odds)
+
+```{r}
+#| label: number-line-4
+plot_fig_slide_09(4)
+```
+
+```{r}
+#| label: notes-slide-09-4
+#| output: asis
+speaker_note("slide-09")
+```
+
+## ln(odds)
+
+```{r}
+#| label: number-line-5
+plot_fig_slide_09(5)
+```
+
+```{r}
+#| label: notes-slide-09-5
+#| output: asis
+speaker_note("slide-09")
+```
+
+## ln(odds)
+
+```{r}
+#| label: number-line-6
+plot_fig_slide_09(6)
+```
+
+```{r}
+#| label: notes-slide-09-6
+#| output: asis
+speaker_note("slide-09")
+```
+
+## ln(odds)
+
+```{r}
+#| label: number-line-7
+plot_fig_slide_09(7)
+```
+
+```{r}
+#| label: notes-slide-09-7
+#| output: asis
+speaker_note("slide-09")
+```
+
+## ln(odds)
+
+```{r}
+#| label: number-line-8
+plot_fig_slide_09(8)
+```
+
+```{r}
+#| label: notes-slide-09-8
+#| output: asis
+speaker_note("slide-09")
+```
+
+## ln(odds)
+
+```{r}
+#| label: number-line-9
+plot_fig_slide_09(9)
+```
+
+```{r}
+#| label: notes-slide-09-9
+#| output: asis
+speaker_note("slide-09")
+```
+
+## Logistic regression --- one model, two views
+
+```{r}
+#| label: two-views-1
+plot_fig_slide_10(1)
+```
+
+```{r}
+#| label: notes-slide-10-1
+#| output: asis
+speaker_note("slide-10")
+```
+
+## Logistic regression --- one model, two views
+
+```{r}
+#| label: two-views-2
+plot_fig_slide_10(2)
+```
+
+```{r}
+#| label: notes-slide-10-2
+#| output: asis
+speaker_note("slide-10")
+```
+
+## Reading a coefficient 
+
+```{r}
+#| label: read-coef
+plot_fig_slide_11()
+```
+
+```{r}
+#| label: notes-slide-11
+#| output: asis
+speaker_note("slide-11")
+```
+
+## Odds Ratio
+
+```{r}
+#| label: odds-ratio-1
+plot_fig_slide_12(1)
+```
+
+```{r}
+#| label: notes-slide-12-1
+#| output: asis
+speaker_note("slide-12")
+```
+
+## Odds Ratio
+
+```{r}
+#| label: odds-ratio-2
+plot_fig_slide_12(2)
+```
+
+```{r}
+#| label: notes-slide-12-2
+#| output: asis
+speaker_note("slide-12")
+```
+
+## Odds Ratio
+
+```{r}
+#| label: odds-ratio-3
+plot_fig_slide_12(3)
+```
+
+```{r}
+#| label: notes-slide-12-3
+#| output: asis
+speaker_note("slide-12")
+```
+
+## Odds Ratio
+
+```{r}
+#| label: odds-ratio-4
+plot_fig_slide_12(4)
+```
+
+```{r}
+#| label: notes-slide-12-4
+#| output: asis
+speaker_note("slide-12")
+```
+
+## Adjustment
+
+```{r}
+#| label: adjustment-2
+plot_fig_slide_13(2)
+```
+
+```{r}
+#| label: notes-slide-13-2
+#| output: asis
+speaker_note("slide-13")
+```
+
+## Adjustment
+
+```{r}
+#| label: adjustment-3
+plot_fig_slide_13(3)
+```
+
+```{r}
+#| label: notes-slide-13-3
+#| output: asis
+speaker_note("slide-13")
+```
+
+## Adjustment
+
+```{r}
+#| label: adjustment-4
+plot_fig_slide_13(4)
+```
+
+```{r}
+#| label: notes-slide-13-4
+#| output: asis
+speaker_note("slide-13")
+```
+
+## Adjustment
+
+```{r}
+#| label: adjustment-5
+plot_fig_slide_13(5)
+```
+
+```{r}
+#| label: notes-slide-13-5
+#| output: asis
+speaker_note("slide-13")
+```
+
+## Adjustment
+
+```{r}
+#| label: adjustment-6
+plot_fig_slide_13(6)
+```
+
+```{r}
+#| label: notes-slide-13-6
+#| output: asis
+speaker_note("slide-13")
+```
+
+## Adjustment
+
+```{r}
+#| label: adjustment-7
+plot_fig_slide_13(7)
+```
+
+```{r}
+#| label: notes-slide-13-7
+#| output: asis
+speaker_note("slide-13")
+```
+
+## Adjustment
+
+```{r}
+#| label: adjustment-8
+plot_fig_slide_13(8)
+```
+
+```{r}
+#| label: notes-slide-13-8
+#| output: asis
+speaker_note("slide-13")
+```
+
+## Adjustment
+
+```{r}
+#| label: adjustment-9
+plot_fig_slide_13(9)
+```
+
+```{r}
+#| label: notes-slide-13-9
+#| output: asis
+speaker_note("slide-13")
+```
+
+## Adjustment
+
+```{r}
+#| label: adjustment-10
+plot_fig_slide_13(10)
+```
+
+```{r}
+#| label: notes-slide-13-10
+#| output: asis
+speaker_note("slide-13")
+```
+
+## Adjustment
+
+```{r}
+#| label: adjustment-11
+plot_fig_slide_13(11)
+```
+
+```{r}
+#| label: notes-slide-13-11
+#| output: asis
+speaker_note("slide-13")
+```
+
+## Adjustment
+
+```{r}
+#| label: adjustment-12
+plot_fig_slide_13(12)
+```
+
+```{r}
+#| label: notes-slide-13-12
+#| output: asis
+speaker_note("slide-13")
+```
+
+## &nbsp; {.summary data-background-color="#1e3b33"}
+
+```{=html}
+<style>
+.reveal .summary h2 { display: none; }                 /* hide the empty title */
+.reveal .summary .s14-body {
+  position: absolute; top: 27%; left: 6%; right: 6%;
+  color: #ffffff; font-size: 1.15em; line-height: 1.5;
+}
+.reveal .summary .s14-hl { color: #85e7d4; font-weight: 700; }
+.reveal .summary .s14-foot {
+  position: absolute; bottom: 7%; left: 6.5%;
+  color: #cddcf9; font-size: 0.55em;
+  font-family: system-ui, "Helvetica Neue", Arial, sans-serif;
+}
+</style>
+```
+
+::: {.s14-body}
+Logistic regression models the [log-odds]{.s14-hl} of a yes/no outcome as
+a [straight line]{.s14-hl} in one or more predictors; each [e^β^]{.s14-hl} is an
+[odds ratio]{.s14-hl} --- the factor by which the odds multiply for a one-unit
+increase, holding the other predictors constant; and an odds
+ratio of [1]{.s14-hl} is the [anchor]{.s14-hl}: no difference.
+:::
+
+[Section 1 complete.  Next: reading a real figure.]{.s14-foot}
+
+```{r}
+#| label: notes-slide-14
+#| output: asis
+speaker_note("slide-14")
+```
+
+## The study
+
+```{r}
+#| label: the-study-1
+#| fig-width: 24
+#| fig-height: 10
+plot_fig_slide_15(1)
+```
+
+```{r}
+#| label: notes-slide-15-1
+#| output: asis
+speaker_note("slide-15")
+```
+
+## The study
+
+```{r}
+#| label: the-study-2
+#| fig-width: 24
+#| fig-height: 10
+plot_fig_slide_15(2)
+```
+
+```{r}
+#| label: notes-slide-15-2
+#| output: asis
+speaker_note("slide-15")
+```
+
+## The study
+
+```{r}
+#| label: the-study-3
+#| fig-width: 24
+#| fig-height: 10
+plot_fig_slide_15(3)
+```
+
+```{r}
+#| label: notes-slide-15-3
+#| output: asis
+speaker_note("slide-15")
+```
+
+## The study
+
+```{r}
+#| label: the-study-4
+#| fig-width: 24
+#| fig-height: 10
+plot_fig_slide_15(4)
+```
+
+```{r}
+#| label: notes-slide-15-4
+#| output: asis
+speaker_note("slide-15")
+```
+
+## Reading the table
+
+```{r}
+#| label: reading-the-table-1
+plot_fig_slide_16(1)
+```
+
+```{r}
+#| label: notes-slide-16-1
+#| output: asis
+speaker_note("slide-16")
+```
+
+## Reading the table
+
+```{r}
+#| label: reading-the-table-2
+plot_fig_slide_16(2)
+```
+
+```{r}
+#| label: notes-slide-16-2
+#| output: asis
+speaker_note("slide-16")
+```
+
+## Reading the table
+
+```{r}
+#| label: reading-the-table-3
+plot_fig_slide_16(3)
+```
+
+```{r}
+#| label: notes-slide-16-3
+#| output: asis
+speaker_note("slide-16")
+```
+
+## Reading the table
+
+```{r}
+#| label: reading-the-table-4
+plot_fig_slide_16(4)
+```
+
+```{r}
+#| label: notes-slide-16-4
+#| output: asis
+speaker_note("slide-16")
+```
+
+## Reading the table
+
+```{r}
+#| label: reading-the-table-5
+plot_fig_slide_16(5)
+```
+
+```{r}
+#| label: notes-slide-16-5
+#| output: asis
+speaker_note("slide-16")
+```
+
+## Reading the table
+
+```{r}
+#| label: reading-the-table-6
+plot_fig_slide_16(6)
+```
+
+```{r}
+#| label: notes-slide-16-6
+#| output: asis
+speaker_note("slide-16")
+```
+
+## Reading the table
+
+```{r}
+#| label: reading-the-table-7
+plot_fig_slide_16(7)
+```
+
+```{r}
+#| label: notes-slide-16-7
+#| output: asis
+speaker_note("slide-16")
+```
+
+## Reading the table
+
+```{r}
+#| label: reading-the-table-8
+plot_fig_slide_16(8)
+```
+
+```{r}
+#| label: notes-slide-16-8
+#| output: asis
+speaker_note("slide-16")
+```
+
+## Reading the table
+
+```{r}
+#| label: reading-the-table-9
+f_forest()
+```
+
+```{r}
+#| label: notes-slide-16-9
+#| output: asis
+speaker_note("slide-16")
+```
+
+## Thank you
+
+```{r}
+#| label: notes-slide-17
+#| output: asis
+speaker_note("slide-17")
+```
