@@ -39,11 +39,11 @@ Most figures build up piece by piece. Each plotting function takes a `stage` arg
 
 ## Rendering the deck
 
-Run bash `quarto render slides.qmd` for Quart to write `slides.html` and a `slides_files/` folder. The render egenerates `sigmoid.png` into the project folder for the title slide. Open `slides.html` in a browser. Press **S** to open the speaker view. Run bash `quarto preview slides.qmd` to preview while you edit. 
+Run bash `quarto render slides.qmd` for Quarto to write `slides.html` and a `slides_files/` folder. The render regenerates `sigmoid.png` into the project folder for the title slide. Open `slides.html` in a browser. Press **S** to open the speaker view. Run bash `quarto preview slides.qmd` to preview while you edit. 
 
 ## Editing the speaker notes
 
-Open `notes.md`. Start each heading text with single word, like `# slide-07`. `slides.qmd` pulls a note in with `speaker_note("slide-07")`. Never start a line of prose with `#` followed by a single word because the parser reads that as a new note. Never use two headings with the same key; `notes.R` stops with an error if you do.
+Open `notes.md`. Start each heading text with single word, like `# slide-07`. `slides.qmd` pulls a note in with `speaker_note("slide-07")`. Never start a line of prose with `#` followed by a single word because the parser reads that as a new note. Never use two headings with the same key. 
 
 ## The title slide is a special case
 
@@ -61,7 +61,7 @@ Edit the variables at the top of `custom.scss`:
 | `$deck-ink`    | Headings on white slides    |
 | `$deck-accent` | "Section 1" label and links |
 
-The title slide background also appears as `data-background-color` in the YAML header of `slides.qmd`. Change both, or the background won't fill the viewport. Figure colors live inside `plots.R`, near the top of each function; they don't read the SCSS variables.
+The title slide background also appears as `data-background-color` in the YAML header of `slides.qmd`. Figure colors live inside `plots.R`, near the top of each function; they don't read the SCSS variables.
 
 ## Paper citation
 
