@@ -32,4 +32,4 @@ The video applies these ideas to Table 5 of Pulsipher et al. (2026), "*Legionell
 
 John Paul Bisciotti, M.S., Lead Data Scientist, Department of Defense.
 
-* The views and opinions expressed in this document are those of the author(s) and do not represent the official position, policy, or endorsement of the Department of Defense (also known as the Department of War), the United States Government, or any of their agencies or components, unless another official document expressly designates them as such. *
+*The views and opinions expressed in this document are those of the author(s) and do not represent the official position, policy, or endorsement of the Department of Defense (also known as the Department of War), the United States Government, or any of their agencies or components, unless another official document expressly designates them as such.*
